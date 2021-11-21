@@ -37,10 +37,10 @@ public class MybatisPlusCodeGenerator {
     // ------- 代码生成配置 ----------------------
 
     // 项目目录，默认当前目录
-    public static String project_path = System.getProperty("user.dir");
+    public static String project_path;
 
     // 输出目录
-    public static String output_dir = project_path + "/src/main/java";
+    public static String output_dir;
 
     // 包名
     public static String package_name;
@@ -130,6 +130,7 @@ public class MybatisPlusCodeGenerator {
             driver = properties.getProperty("driver");
             table_prefix = properties.getProperty("table_prefix");
             project_path = properties.getProperty("project_path");
+            output_dir = project_path + "/src/main/java";
             package_name = properties.getProperty("package_name");
             author = properties.getProperty("author");
             enable_lombok = Boolean.parseBoolean(properties.getProperty("enable_lombok"));
