@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Properties;
@@ -16,6 +18,8 @@ import java.util.Scanner;
  * @date 2021/10/13
  */
 public class MybatisPlusCodeGenerator {
+
+    private static final Logger logger = LoggerFactory.getLogger(MybatisPlusCodeGenerator.class);
 
     // ------- mysql 配置 ----------------------
 
@@ -32,36 +36,35 @@ public class MybatisPlusCodeGenerator {
     public static String driver;
 
     // 设置表前缀
-    public static String table_prefix;
+    public static String tablePrefix;
 
     // ------- 代码生成配置 ----------------------
 
     // 项目目录，默认当前目录
-    public static String project_path;
+    public static String projectPath;
 
     // 输出目录
-    public static String output_dir;
+    public static String outputDir;
 
     // 包名
-    public static String package_name;
+    public static String packageName;
 
     // 作者名称
     public static String author;
 
     // 是否开启lombok注解
-    public static boolean enable_lombok = true;
+    public static boolean enableLombok = true;
 
     /**
      * 读取控制台内容
      */
     public static String scanner(String tip) {
         Scanner scanner = new Scanner(System.in);
-        StringBuilder help = new StringBuilder();
-        help.append("请输入" + tip + "：");
-        System.out.println(help.toString());
+        System.out.println("请输入" + tip + "：");
         if (scanner.hasNext()) {
             String ipt = scanner.next();
             if (StringUtils.isNotBlank(ipt)) {
+                System.out.println(ipt);
                 return ipt;
             }
         }
@@ -74,7 +77,7 @@ public class MybatisPlusCodeGenerator {
 
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-        gc.setOutputDir(output_dir);
+        gc.setOutputDir(outputDir);
         gc.setAuthor(author);
         gc.setOpen(false);
         // 实体属性 Swagger2 注解
@@ -93,7 +96,7 @@ public class MybatisPlusCodeGenerator {
         // 包配置
         final PackageConfig pc = new PackageConfig();
         pc.setModuleName(scanner("模块名"));
-        pc.setParent(package_name);
+        pc.setParent(packageName);
         mpg.setPackageInfo(pc);
 
         // 策略配置
@@ -104,39 +107,56 @@ public class MybatisPlusCodeGenerator {
         // 字段名，下划线 -> 驼峰
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         // strategy.setSuperEntityClass("你自己的父类实体,没有就不用设置!");
-        strategy.setEntityLombokModel(enable_lombok);
+        strategy.setEntityLombokModel(enableLombok);
 
         strategy.setRestControllerStyle(true);
         // 公共父类
         // strategy.setSuperControllerClass("你自己的父类控制器,没有就不用设置!");
         // 写于父类中的公共字段
         // strategy.setSuperEntityColumns("id");
-        strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
+        String[] split = scanner("表名，多个英文逗号分割").split(",");
+        for (String s : split) {
+            logger.info("获取到输入表明: {}", s);
+        }
+        strategy.setInclude();
         strategy.setControllerMappingHyphenStyle(true);
-        strategy.setTablePrefix(table_prefix);
+        strategy.setTablePrefix(tablePrefix);
         mpg.setStrategy(strategy);
         mpg.execute();
     }
 
     public static void loadProperties() {
+        logger.info("开始读取配置文件...");
         InputStream in;
         Properties properties = new Properties();
         try {
-            in = new BufferedInputStream(new FileInputStream(new File("config.properties")));
+            in = new BufferedInputStream(new FileInputStream("config.properties"));
             properties.load(in);
             url = properties.getProperty("url");
             username = properties.getProperty("username");
             password = properties.getProperty("password");
             driver = properties.getProperty("driver");
-            table_prefix = properties.getProperty("table_prefix");
-            project_path = properties.getProperty("project_path");
-            output_dir = project_path + "/src/main/java";
-            package_name = properties.getProperty("package_name");
+            tablePrefix = properties.getProperty("table_prefix");
+            projectPath = properties.getProperty("project_path");
+            outputDir = projectPath + "/src/main/java";
+            packageName = properties.getProperty("package_name");
             author = properties.getProperty("author");
-            enable_lombok = Boolean.parseBoolean(properties.getProperty("enable_lombok"));
+            enableLombok = Boolean.parseBoolean(properties.getProperty("enable_lombok"));
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        logger.info("url: " + url);
+        logger.info("username: " + username);
+        logger.info("password: " + password);
+        logger.info("driver: " + driver);
+        logger.info("table_prefix: " + tablePrefix);
+        logger.info("project_path: " + projectPath);
+        logger.info("output_dir: " + outputDir);
+        logger.info("package_name: " + packageName);
+        logger.info("author: " + author);
+        logger.info("enable_lombok: " + enableLombok);
+        logger.info("读取配置文件结束...");
     }
 
     public static void main(String[] args) {
