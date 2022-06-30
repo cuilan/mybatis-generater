@@ -116,9 +116,9 @@ public class MybatisPlusCodeGenerator {
         // strategy.setSuperEntityColumns("id");
         String[] split = scanner("表名，多个英文逗号分割").split(",");
         for (String s : split) {
-            logger.info("获取到输入表明: {}", s);
+            logger.info("获取到输入表名: {}", s);
         }
-        strategy.setInclude();
+        strategy.setInclude(split);
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(tablePrefix);
         mpg.setStrategy(strategy);
